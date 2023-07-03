@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 import com.storediscounts.StoreDiscounts.models.Card;
 import com.storediscounts.StoreDiscounts.models.Customer;
 import com.storediscounts.StoreDiscounts.models.Orders;
+import com.storediscounts.StoreDiscounts.models.OrdersProduct;
 import com.storediscounts.StoreDiscounts.models.Product;
 import com.storediscounts.StoreDiscounts.repository.CustomerRepository;
 import com.storediscounts.StoreDiscounts.repository.OrderRepository;
+import com.storediscounts.StoreDiscounts.repository.OrdersProductRepository;
 import com.storediscounts.StoreDiscounts.repository.ProductRepository;
 
 @Service
@@ -26,6 +28,8 @@ public class OrderServices {
     @Autowired
     ProductRepository _productRepository;
 
+    @Autowired
+    OrdersProductRepository _ordersProductRepository;
 
     public double CalculateInvoce(Customer customer, Card card, double invoice) {
         double discount = 0;
@@ -59,23 +63,28 @@ public class OrderServices {
         for (int p : products_id) {
 
             product = _productRepository.findProduct(p);
-            System.out.println(product);
 
             if (product.getProductType().getId() != 1) {
                 orderInvoce += CalculateInvoce(customer, card, product.getPrice());
+            } else {
+                orderInvoce += product.getPrice();
             }
-            else{
-                 orderInvoce +=product.getPrice();
-            }
+
         }
 
-        orderInvoce -=  ((int)(orderInvoce / 200)*5);
+        orderInvoce -= ((int) (orderInvoce / 200) * 5);
 
-        System.out.println(orderInvoce);
         order.setInvoice(orderInvoce);
-        System.out.println(order);
 
         _orderRepository.save(order);
+
+        for (int p : products_id) {
+            OrdersProduct ordersProduct = new OrdersProduct();
+            ordersProduct.setOrdersProduct(order);
+            product = _productRepository.findProduct(p);
+            ordersProduct.setProduct(product);
+            _ordersProductRepository.save(ordersProduct);
+        }
 
     }
 }

@@ -25,4 +25,9 @@ public class Orders {
    @ManyToOne
     private Customer customer;
 
+    
+    @OneToMany(mappedBy = "ordersProduct")
+    private List<OrdersProduct> items;
+
+
 }

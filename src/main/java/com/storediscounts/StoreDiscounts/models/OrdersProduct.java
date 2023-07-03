@@ -1,6 +1,6 @@
 package com.storediscounts.StoreDiscounts.models;
 
-import java.time.LocalDate;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -10,29 +10,16 @@ import lombok.Data;
 
 @Data
 @Entity
-public class Customer {
+public class OrdersProduct {
     @Id
     @GeneratedValue
     private int id;
 
-    private String name;
-
-    private String surname;
-
-    private String address;
-
-    private String email;
-
-    private String password;
-
-    private LocalDate creationDate;
-
-    private Boolean affiliate ;
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
 
     @ManyToOne
-    @JoinColumn(name="card_id")
-    private Card card;
-
-    
-
+    @JoinColumn(name = "order_id")
+    private Orders ordersProduct;
 }
